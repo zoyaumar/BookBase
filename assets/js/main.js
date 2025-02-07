@@ -4,10 +4,6 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
-
-
-
-
 (function ($) {
 
 	var $window = $(window),
@@ -268,25 +264,26 @@
 
 /*=============================  API =====================================*/
 
-
+console.log("update")
 // Get the API key from the query string
 if (document.querySelector('.add-book') != null)
 	document.querySelector('.add-book').addEventListener('click', fetchData)
 
 /*FETCH*/
 async function fetchData() {
-	//store input book values
+	//store input book values 
 	let bookTitleInput = document.querySelector('.book-title').value
 	let bookAuthorInput = document.querySelector('.book-author').value
 
 	try {
+		console.log(bookAuthorInput)
 		let url = `https://openlibrary.org/search.json?title=${bookTitleInput}&author=${bookAuthorInput}`
 		let response = await fetch(url)
 		let data = await response.json()
-		console.log(data)
+		console.log(data?data:"none")
 
 		//create book obj from returned JSON
-		let book = new Book(data.docs[0].title, data.docs[0].author_name[0], data.docs[0].isbn[0])
+		let book = new Book(data.docs[0].title, data.docs[0].author_name[0], data.docs[0].ia[0])
 
 		//add book to library object
 		addBookToLibrary(book)
@@ -305,10 +302,10 @@ async function fetchData() {
 
 //BOOK OBJECT
 class Book {
-	constructor(title, author, isbn) {
+	constructor(title, author, ia) {
 		this.title = title;
 		this.author = author;
-		this.isbn = isbn;
+		this.ia = ia;
 		this.available = true;
 	}
 
@@ -324,8 +321,8 @@ class Book {
 
 	// Method to display book information
 	displayInfo() {
-		console.log(`${this.title} by ${this.author} (ISBN: ${this.isbn})`);
-		return (`${this.title} by ${this.author} (ISBN: ${this.isbn})`);
+		console.log(`${this.title} by ${this.author}`);
+		return (`${this.title} by ${this.author}`);
 	}
 }
 
@@ -341,8 +338,8 @@ class Library {
 	}
 
 	// Method to add a new book
-	addBook(title, author, isbn) {
-		const newBook = new Book(title, author, isbn);
+	addBook(title, author, ia) {
+		const newBook = new Book(title, author, ia);
 
 		//check if book already is in the library if it is not then add to library
 		if ((myLibrary.searchBook(newBook.title.toLowerCase()) === `No books found matching "${newBook.title.toLowerCase()}".`) &&
@@ -355,9 +352,9 @@ class Library {
 	}
 
 	// Method to remove a book
-	removeBook(isbn) {
-		this.books = this.books.filter(book => book.isbn !== isbn);
-		console.log(`Book with ISBN ${isbn} has been removed from ${this.name}.`);
+	removeBook(ia) {
+		this.books = this.books.filter(book => book.ia !== ia);
+		console.log(`Book with ISBN ${ia} has been removed from ${this.name}.`);
 	}
 
 	// Method to display all available books
@@ -393,7 +390,7 @@ class Library {
 let myLibrary = new Library("My Library", null);
 
 function addBookToLibrary(newBook) {
-	myLibrary.addBook(newBook.title, newBook.author, newBook.isbn)
+	myLibrary.addBook(newBook.title, newBook.author, newBook.ia)
 	localStorage.setItem("library", JSON.stringify(myLibrary));
 	console.log(myLibrary.books)
 }
@@ -402,7 +399,7 @@ function addBookToLibrary(newBook) {
 if (localStorage.getItem('library')) {
 	myLibrary = JSON.parse(localStorage.getItem('library'));
 	myLibrary = new Library(myLibrary.name, myLibrary.books);
-	console.log("local " + myLibrary.books[0].title)
+	console.log("local " + myLibrary.books)
 }
 else {
 	localStorage.setItem("library", JSON.stringify(myLibrary));
@@ -424,7 +421,7 @@ if (document.querySelector('.books') != null) {
 			const art = document.createElement('article');
 			const titleHeading = document.createElement('h3');
 			const author = document.createElement('p');
-			const isbn = document.createElement('p');
+			//const isbn = document.createElement('p');
 			const btnRemove = document.createElement('button');
 			const btnMove = document.createElement('button');
 			btnRemove.innerText = "REMOVE";
@@ -434,10 +431,10 @@ if (document.querySelector('.books') != null) {
 			btnRemove.classList.add("view-btn");
 			titleHeading.innerText = b.title;
 			author.innerText = b.author;
-			isbn.innerText = b.isbn;
+			//isbn.innerText = b.isbn;
 			art.appendChild(titleHeading);
 			art.appendChild(author);
-			art.appendChild(isbn);
+			//art.appendChild(isbn);
 			art.appendChild(btnRemove);
 			let bool = (e===undefined) ? false : b.title.toLowerCase().includes(e.target.value.toLowerCase());
 			if (e === undefined || bool) {
@@ -465,13 +462,13 @@ if (document.querySelector('.homeView') != null) {
 		const art = document.createElement('article');
 		const titleHeading = document.createElement('h3');
 		const author = document.createElement('p');
-		const isbn = document.createElement('p');
+		//const isbn = document.createElement('p');
 		titleHeading.innerText = b.title;
 		author.innerText = b.author;
-		isbn.innerText = b.isbn;
+		//isbn.innerText = b.isbn;
 		art.appendChild(titleHeading);
 		art.appendChild(author);
-		art.appendChild(isbn);
+		//art.appendChild(isbn);
 		homeView.appendChild(art);
 	}
 }
@@ -488,7 +485,7 @@ function availability(b) {
 
 function removeFunc(b) {
 	return function () {
-		myLibrary.removeBook(b.isbn);
+		myLibrary.removeBook(b.ia);
 		localStorage.setItem("library", JSON.stringify(myLibrary));
 		location.reload();
 		console.log("changed")
