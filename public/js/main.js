@@ -269,6 +269,23 @@ console.log("update")
 if (document.querySelector('.add-book') != null)
 	document.querySelector('.add-book').addEventListener('click', fetchData)
 
+const addBookToLibrary = async (newBook) => {
+	console.log("addbook ", newBook)
+	const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newBook),
+    });
+
+    const addedBook = await response.json();
+    console.log("added ", addedBook)
+	//myLibrary.addBook(newBook.title, newBook.author, newBook.ia)
+	//localStorage.setItem("library", JSON.stringify(myLibrary));
+	//console.log(myLibrary.books)
+}
+
 /*FETCH*/
 async function fetchData() {
 	//store input book values 
@@ -340,15 +357,12 @@ class Library {
 	// Method to add a new book
 	addBook(title, author, ia) {
 		const newBook = new Book(title, author, ia);
-
 		//check if book already is in the library if it is not then add to library
-		if ((myLibrary.searchBook(newBook.title.toLowerCase()) === `No books found matching "${newBook.title.toLowerCase()}".`) &&
-			(myLibrary.searchBook(newBook.author.toLowerCase()) === `No books found matching "${newBook.author.toLowerCase()}".`)) {
+		// if ((myLibrary.searchBook(newBook.title.toLowerCase()) === `No books found matching "${newBook.title.toLowerCase()}".`) &&
+		// 	(myLibrary.searchBook(newBook.author.toLowerCase()) === `No books found matching "${newBook.author.toLowerCase()}".`)) {
 			this.books.push(newBook);
 			console.log(`${newBook.title} by ${newBook.author} has been added to ${this.name}.`);
-		}
-
-
+		//}
 	}
 
 	// Method to remove a book
@@ -388,21 +402,18 @@ class Library {
 /*================View Books======================*/
 
 let myLibrary = new Library("My Library", null);
+const API_URL = 'http://localhost:5500/books';
 
-function addBookToLibrary(newBook) {
-	myLibrary.addBook(newBook.title, newBook.author, newBook.ia)
-	localStorage.setItem("library", JSON.stringify(myLibrary));
-	console.log(myLibrary.books)
-}
+
 
 
 if (localStorage.getItem('library')) {
-	myLibrary = JSON.parse(localStorage.getItem('library'));
-	myLibrary = new Library(myLibrary.name, myLibrary.books);
-	console.log("local " + myLibrary.books)
+	//myLibrary = JSON.parse(localStorage.getItem('library'));
+	//myLibrary = new Library(myLibrary.name, myLibrary.books);
+	//console.log("local " + myLibrary.books)
 }
 else {
-	localStorage.setItem("library", JSON.stringify(myLibrary));
+	//localStorage.setItem("library", JSON.stringify(myLibrary));
 }
 
 if (document.querySelector('.books') != null) {
@@ -421,7 +432,6 @@ if (document.querySelector('.books') != null) {
 			const art = document.createElement('article');
 			const titleHeading = document.createElement('h3');
 			const author = document.createElement('p');
-			//const isbn = document.createElement('p');
 			const btnRemove = document.createElement('button');
 			const btnMove = document.createElement('button');
 			btnRemove.innerText = "REMOVE";
@@ -431,10 +441,8 @@ if (document.querySelector('.books') != null) {
 			btnRemove.classList.add("view-btn");
 			titleHeading.innerText = b.title;
 			author.innerText = b.author;
-			//isbn.innerText = b.isbn;
 			art.appendChild(titleHeading);
 			art.appendChild(author);
-			//art.appendChild(isbn);
 			art.appendChild(btnRemove);
 			let bool = (e===undefined) ? false : b.title.toLowerCase().includes(e.target.value.toLowerCase());
 			if (e === undefined || bool) {
@@ -449,8 +457,6 @@ if (document.querySelector('.books') != null) {
 					divUnavailable.appendChild(art);
 				}
 			}
-
-
 		}
 	}
 }
@@ -462,13 +468,10 @@ if (document.querySelector('.homeView') != null) {
 		const art = document.createElement('article');
 		const titleHeading = document.createElement('h3');
 		const author = document.createElement('p');
-		//const isbn = document.createElement('p');
 		titleHeading.innerText = b.title;
 		author.innerText = b.author;
-		//isbn.innerText = b.isbn;
 		art.appendChild(titleHeading);
 		art.appendChild(author);
-		//art.appendChild(isbn);
 		homeView.appendChild(art);
 	}
 }
@@ -477,7 +480,7 @@ if (document.querySelector('.homeView') != null) {
 function availability(b) {
 	return function () {
 		b.available = !b.available;
-		localStorage.setItem("library", JSON.stringify(myLibrary));
+		//localStorage.setItem("library", JSON.stringify(myLibrary));
 		location.reload();
 		console.log("changed")
 	}
@@ -485,8 +488,8 @@ function availability(b) {
 
 function removeFunc(b) {
 	return function () {
-		myLibrary.removeBook(b.ia);
-		localStorage.setItem("library", JSON.stringify(myLibrary));
+		//myLibrary.removeBook(b.ia);
+		//localStorage.setItem("library", JSON.stringify(myLibrary));
 		location.reload();
 		console.log("changed")
 	}

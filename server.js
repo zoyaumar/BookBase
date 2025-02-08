@@ -1,14 +1,21 @@
-// index.js
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
-const Book = require('./Book');
+const cors = require('cors');
+const methodOverride = require("method-override");
+const path = require('path');
 
+require("dotenv").config({ path: "./config/.env" });
+
+const Book = require('./backend/Book');
 const app = express();
 const PORT = process.env.PORT || 5500;
 
 // Middleware
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(methodOverride("_method"));
+app.use(express.static(path.join(__dirname, 'public'))); // Make sure this is before your route definitions
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
@@ -23,6 +30,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.post('/books', async (req, res) => {
     const { title, author, ia } = req.body;
     const newBook = new Book({ title, author, ia });
+    console.log(newBook)
     try {
         await newBook.save();
         res.status(201).json(newBook);
@@ -41,8 +49,23 @@ app.get('/books', async (req, res) => {
     }
 });
 
+app.get('/updateBooks', async (req, res) => {
+    try {
+        res.sendFile(path.join(__dirname, 'public', 'updateBooks.html')); 
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+app.get('/', async (req, res) => {
+    try {
+        res.sendFile('public/index.html'); 
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // Update a task
-app.put('/book/:id', async (req, res) => {
+app.put('/books/:id', async (req, res) => {
     try {
         const book = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(book);
