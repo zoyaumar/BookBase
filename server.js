@@ -26,10 +26,27 @@ mongoose.connect(process.env.MONGODB_URI, {
 .catch((err) => console.error(err));
 
 
+
+// app.get('/updateBooks', async (req, res) => {
+//     try {
+//         res.sendFile(path.join(__dirname, 'public', 'updateBooks.html')); 
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+// });
+
+app.get('/', async (req, res) => {
+    try {
+        res.sendFile('public/index.html'); 
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // Create a task
 app.post('/books', async (req, res) => {
-    const { title, author, ia } = req.body;
-    const newBook = new Book({ title, author, ia });
+    const { title, author, ia, available } = req.body;
+    const newBook = new Book({ title, author, ia, available });
     console.log(newBook)
     try {
         await newBook.save();
@@ -49,25 +66,11 @@ app.get('/books', async (req, res) => {
     }
 });
 
-app.get('/updateBooks', async (req, res) => {
-    try {
-        res.sendFile(path.join(__dirname, 'public', 'updateBooks.html')); 
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-app.get('/', async (req, res) => {
-    try {
-        res.sendFile('public/index.html'); 
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
 // Update a task
-app.put('/books/:id', async (req, res) => {
+app.put('/books/:ia', async (req, res) => {
+    const { available } = req.body;
     try {
-        const book = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const book = await Book.findOneAndUpdate({ ia: req.params.ia }, {available}, { new: true });
         res.json(book);
     } catch (err) {
         res.status(400).json({ message: err.message });

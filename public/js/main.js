@@ -300,7 +300,7 @@ async function fetchData() {
 		console.log(data?data:"none")
 
 		//create book obj from returned JSON
-		let book = new Book(data.docs[0].title, data.docs[0].author_name[0], data.docs[0].ia[0])
+		let book = new Book(data.docs[0].title, data.docs[0].author_name[0], data.docs[0].ia[0], true)
 
 		//add book to library object
 		addBookToLibrary(book)
@@ -319,11 +319,11 @@ async function fetchData() {
 
 //BOOK OBJECT
 class Book {
-	constructor(title, author, ia) {
+	constructor(title, author, ia, available) {
 		this.title = title;
 		this.author = author;
 		this.ia = ia;
-		this.available = true;
+		this.available = available;
 	}
 
 	// Getter for availability
@@ -355,8 +355,8 @@ class Library {
 	}
 
 	// Method to add a new book
-	addBook(title, author, ia) {
-		const newBook = new Book(title, author, ia);
+	addBook(title, author, ia, available) {
+		const newBook = new Book(title, author, ia, available);
 		//check if book already is in the library if it is not then add to library
 		// if ((myLibrary.searchBook(newBook.title.toLowerCase()) === `No books found matching "${newBook.title.toLowerCase()}".`) &&
 		// 	(myLibrary.searchBook(newBook.author.toLowerCase()) === `No books found matching "${newBook.author.toLowerCase()}".`)) {
@@ -402,19 +402,38 @@ class Library {
 /*================View Books======================*/
 
 let myLibrary = new Library("My Library", null);
+let getBooks = []
 const API_URL = 'http://localhost:5500/books';
 
 
+const fetchBooks = async () => {
+	const response = await fetch(API_URL, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+    getBooks = await response.json();
+	for(const book of getBooks){
+		console.log(book)
+		myLibrary.addBook(book.title, book.author, book.ia, book.available)
+	}
+    console.log("fetched ", getBooks)
+	if(document.querySelector('.books') != null) updateView(undefined);
+	if (document.querySelector('.homeView') != null) homeBooks()
+}
+fetchBooks();
 
 
-if (localStorage.getItem('library')) {
-	//myLibrary = JSON.parse(localStorage.getItem('library'));
-	//myLibrary = new Library(myLibrary.name, myLibrary.books);
-	//console.log("local " + myLibrary.books)
-}
-else {
-	//localStorage.setItem("library", JSON.stringify(myLibrary));
-}
+// if (localStorage.getItem('library')) {
+// 	myLibrary = JSON.parse(localStorage.getItem('library'));
+// 	myLibrary = new Library(myLibrary.name, myLibrary.books);
+// 	console.log("local " + myLibrary.books)
+// }
+// else {
+// 	localStorage.setItem("library", JSON.stringify(myLibrary));
+// }
+
 
 if (document.querySelector('.books') != null) {
 	const divAvailable = document.querySelector('.books')
@@ -422,13 +441,14 @@ if (document.querySelector('.books') != null) {
 
 	const searchBar = document.getElementById("query");
 	searchBar.addEventListener("input", updateView);
-	updateView();
+	
 
 	//Populate books in View Library
 	function updateView(e){ 
 		divAvailable.innerHTML = '';
 		divUnavailable.innerHTML = '';
 		for (let b of myLibrary.books) {
+			console.log("book ", b)
 			const art = document.createElement('article');
 			const titleHeading = document.createElement('h3');
 			const author = document.createElement('p');
@@ -444,6 +464,7 @@ if (document.querySelector('.books') != null) {
 			art.appendChild(titleHeading);
 			art.appendChild(author);
 			art.appendChild(btnRemove);
+			
 			let bool = (e===undefined) ? false : b.title.toLowerCase().includes(e.target.value.toLowerCase());
 			if (e === undefined || bool) {
 				if (b.available) {
@@ -461,27 +482,31 @@ if (document.querySelector('.books') != null) {
 	}
 }
 
-if (document.querySelector('.homeView') != null) {
-	const homeView = document.querySelector('.homeView')
-	for (let i = 0; i < 3; i++) {
-		let b = myLibrary.books[i];
-		const art = document.createElement('article');
-		const titleHeading = document.createElement('h3');
-		const author = document.createElement('p');
-		titleHeading.innerText = b.title;
-		author.innerText = b.author;
-		art.appendChild(titleHeading);
-		art.appendChild(author);
-		homeView.appendChild(art);
+function homeBooks(){
+	if (document.querySelector('.homeView') != null) {
+		const homeView = document.querySelector('.homeView')
+		for (let i = 0; i < 3; i++) {
+			let b = myLibrary.books[i];
+			const art = document.createElement('article');
+			const titleHeading = document.createElement('h3');
+			const author = document.createElement('p');
+			titleHeading.innerText = b.title;
+			author.innerText = b.author;
+			art.appendChild(titleHeading);
+			art.appendChild(author);
+			homeView.appendChild(art);
+		}
 	}
 }
+
 
 //Move Button
 function availability(b) {
 	return function () {
 		b.available = !b.available;
+		changeAvailability(b.ia, b.available)
 		//localStorage.setItem("library", JSON.stringify(myLibrary));
-		location.reload();
+		
 		console.log("changed")
 	}
 }
@@ -493,6 +518,21 @@ function removeFunc(b) {
 		location.reload();
 		console.log("changed")
 	}
+}
+
+const changeAvailability = async (ia, available) => {
+	const response = await fetch((API_URL+"/"+ia), {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+		body: JSON.stringify({ available }),
+    });
+
+    const addedBook = await response.json();
+    console.log("updated ", addedBook)
+
+	location.reload();
 }
 
 /*================================================================*/

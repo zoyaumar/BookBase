@@ -14,6 +14,10 @@ const bookSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    available: {
+        type: Boolean,
+        required: true
+    },
     user: {
         type: ObjectId,
         required: false,
