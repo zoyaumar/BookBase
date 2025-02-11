@@ -515,7 +515,7 @@ function removeFunc(b) {
 	return function () {
 		//myLibrary.removeBook(b.ia);
 		//localStorage.setItem("library", JSON.stringify(myLibrary));
-		location.reload();
+		deleteBookByIa(b.ia)
 		console.log("changed")
 	}
 }
@@ -534,5 +534,21 @@ const changeAvailability = async (ia, available) => {
 
 	location.reload();
 }
+
+const deleteBookByIa = async (ia) => {
+    try {
+        const response = await fetch(`${API_URL}/${ia}`, {
+            method: 'DELETE', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+		location.reload();
+
+    } catch (error) {
+        console.error('Error deleting book:', error);
+        throw error; // Rethrow the error for further handling if needed
+    }
+};
 
 /*================================================================*/

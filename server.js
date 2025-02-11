@@ -78,9 +78,9 @@ app.put('/books/:ia', async (req, res) => {
 });
 
 // Delete a task
-app.delete('/books/:id', async (req, res) => {
+app.delete('/books/:ia', async (req, res) => {
     try {
-        await Book.findByIdAndDelete(req.params.id);
+        await Book.findOneAndDelete(req.params.ia);
         res.json({ message: 'Book deleted' });
     } catch (err) {
         res.status(500).json({ message: err.message });
