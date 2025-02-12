@@ -19,10 +19,6 @@ const bookSchema = new mongoose.Schema({
         required: true
     },
     user: {
-        type: ObjectId,
-        required: false,
-    },
-    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },

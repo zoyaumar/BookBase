@@ -3796,3 +3796,7 @@ button:disabled,
 .viewbtn{
   margin: 2em 2em;
 }
+
+.hidden {
+  display: none;
+}

@@ -272,15 +272,15 @@ if (document.querySelector('.add-book') != null)
 const addBookToLibrary = async (newBook) => {
 	console.log("addbook ", newBook)
 	const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newBook),
-    });
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(newBook),
+	});
 
-    const addedBook = await response.json();
-    console.log("added ", addedBook)
+	const addedBook = await response.json();
+	console.log("added ", addedBook)
 	//myLibrary.addBook(newBook.title, newBook.author, newBook.ia)
 	//localStorage.setItem("library", JSON.stringify(myLibrary));
 	//console.log(myLibrary.books)
@@ -297,7 +297,7 @@ async function fetchData() {
 		let url = `https://openlibrary.org/search.json?title=${bookTitleInput}&author=${bookAuthorInput}`
 		let response = await fetch(url)
 		let data = await response.json()
-		console.log(data?data:"none")
+		console.log(data ? data : "none")
 
 		//create book obj from returned JSON
 		let book = new Book(data.docs[0].title, data.docs[0].author_name[0], data.docs[0].ia[0], true)
@@ -360,8 +360,8 @@ class Library {
 		//check if book already is in the library if it is not then add to library
 		// if ((myLibrary.searchBook(newBook.title.toLowerCase()) === `No books found matching "${newBook.title.toLowerCase()}".`) &&
 		// 	(myLibrary.searchBook(newBook.author.toLowerCase()) === `No books found matching "${newBook.author.toLowerCase()}".`)) {
-			this.books.push(newBook);
-			console.log(`${newBook.title} by ${newBook.author} has been added to ${this.name}.`);
+		this.books.push(newBook);
+		console.log(`${newBook.title} by ${newBook.author} has been added to ${this.name}.`);
 		//}
 	}
 
@@ -408,18 +408,18 @@ const API_URL = 'http://localhost:5500/books';
 
 const fetchBooks = async () => {
 	const response = await fetch(API_URL, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    });
-    getBooks = await response.json();
-	for(const book of getBooks){
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		}
+	});
+	getBooks = await response.json();
+	for (const book of getBooks) {
 		console.log(book)
 		myLibrary.addBook(book.title, book.author, book.ia, book.available)
 	}
-    console.log("fetched ", getBooks)
-	if(document.querySelector('.books') != null) updateView(undefined);
+	console.log("fetched ", getBooks)
+	if (document.querySelector('.books') != null) updateView(undefined);
 	if (document.querySelector('.homeView') != null) homeBooks()
 }
 fetchBooks();
@@ -441,10 +441,10 @@ if (document.querySelector('.books') != null) {
 
 	const searchBar = document.getElementById("query");
 	searchBar.addEventListener("input", updateView);
-	
+
 
 	//Populate books in View Library
-	function updateView(e){ 
+	function updateView(e) {
 		divAvailable.innerHTML = '';
 		divUnavailable.innerHTML = '';
 		for (let b of myLibrary.books) {
@@ -464,8 +464,8 @@ if (document.querySelector('.books') != null) {
 			art.appendChild(titleHeading);
 			art.appendChild(author);
 			art.appendChild(btnRemove);
-			
-			let bool = (e===undefined) ? false : b.title.toLowerCase().includes(e.target.value.toLowerCase());
+
+			let bool = (e === undefined) ? false : b.title.toLowerCase().includes(e.target.value.toLowerCase());
 			if (e === undefined || bool) {
 				if (b.available) {
 					btnMove.innerText = "MOVE 🡣";
@@ -482,7 +482,7 @@ if (document.querySelector('.books') != null) {
 	}
 }
 
-function homeBooks(){
+function homeBooks() {
 	if (document.querySelector('.homeView') != null) {
 		const homeView = document.querySelector('.homeView')
 		for (let i = 0; i < 3; i++) {
@@ -506,7 +506,7 @@ function availability(b) {
 		b.available = !b.available;
 		changeAvailability(b.ia, b.available)
 		//localStorage.setItem("library", JSON.stringify(myLibrary));
-		
+
 		console.log("changed")
 	}
 }
@@ -521,34 +521,75 @@ function removeFunc(b) {
 }
 
 const changeAvailability = async (ia, available) => {
-	const response = await fetch((API_URL+"/"+ia), {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+	const response = await fetch((API_URL + "/" + ia), {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+		},
 		body: JSON.stringify({ available }),
-    });
+	});
 
-    const addedBook = await response.json();
-    console.log("updated ", addedBook)
+	const addedBook = await response.json();
+	console.log("updated ", addedBook)
 
 	location.reload();
 }
 
 const deleteBookByIa = async (ia) => {
-    try {
-        const response = await fetch(`${API_URL}/${ia}`, {
-            method: 'DELETE', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+	try {
+		const response = await fetch(`${API_URL}/${ia}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
 		location.reload();
 
-    } catch (error) {
-        console.error('Error deleting book:', error);
-        throw error; // Rethrow the error for further handling if needed
-    }
+	} catch (error) {
+		console.error('Error deleting book:', error);
+		throw error; // Rethrow the error for further handling if needed
+	}
 };
 
-/*================================================================*/
+/*=========================Auth Buttons=============================*/
+
+if (document.getElementById('menu') != null) {
+	let userLoggedIn = false;
+
+	const isLoggedIn = async () => {
+		try {
+			await fetch('/isAuthenticated')
+				.then(response => response.json())
+				.then(data => {
+					if (data.authenticated) {
+						userLoggedIn = true;
+						console.log('User is authenticated');
+					} else {
+						console.log('User is not authenticated');
+					}
+				});
+				displayAuthButtons();
+		} catch (error) {
+			throw error; // Rethrow the error for further handling if needed
+		}
+	};
+	isLoggedIn()
+
+	// Function to display buttons based on login status
+	function displayAuthButtons() {
+		const authButtons = document.getElementById('auth-buttons');
+		const logOutButton = document.getElementById('logout');
+		if (userLoggedIn) {
+			authButtons.classList.add('hidden');
+			logOutButton.classList.remove('hidden');
+		} else {
+			authButtons.classList.remove('hidden');
+			logOutButton.classList.add('hidden');
+		}
+		logOutButton.onclick = function() {
+			window.location.href = '/logout'; 
+		};
+	}
+
+	
+}

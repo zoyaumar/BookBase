@@ -47,7 +47,8 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 app.post('/books', async (req, res) => {
     const { title, author, ia, available } = req.body;
-    const newBook = new Book({ title, author, ia, available });
+    const user = req.user.id
+    const newBook = new Book({ title, author, ia, available, user });
     console.log(newBook)
     try {
         await newBook.save();
@@ -59,7 +60,7 @@ app.post('/books', async (req, res) => {
 
 app.get('/books', async (req, res) => {
     try {
-        const books = await Book.find();
+        const books = await Book.find({ user: req.user.id });
         res.json(books);
         console.log("user", req.user)
     } catch (err) {
@@ -105,6 +106,11 @@ router.get("/login", (req, res) => {
 
 router.get("/signup", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'signup.html'));
+});
+
+app.get('/isAuthenticated', (req, res) => {
+    res.json({ authenticated: req.isAuthenticated() });
+    console.log(req.isAuthenticated())
 });
 
 router.post("/login", authController.postLogin);
