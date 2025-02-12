@@ -587,7 +587,7 @@ if (document.getElementById('menu') != null) {
 			logOutButton.classList.add('hidden');
 		}
 		logOutButton.onclick = function() {
-			window.location.href = '/logout'; 
+			location.href = '/logout'; 
 		};
 	}
 
