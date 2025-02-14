@@ -110,7 +110,7 @@ router.get("/signup", (req, res) => {
 
 app.get('/isAuthenticated', (req, res) => {
     res.json({ authenticated: req.isAuthenticated() });
-    console.log(req.isAuthenticated())
+    console.log("user", req.isAuthenticated())
 });
 
 router.post("/login", authController.postLogin);

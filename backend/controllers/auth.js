@@ -45,14 +45,25 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  req.logout(() => {
-    console.log('User has logged out.')
-  })
-  req.session.destroy((err) => {
-    if (err)
-      console.log("Error : Failed to destroy the session during logout.", err);
-    req.user = null;
-    res.redirect("/");
+  req.logout((err) => {
+    if (err) {
+      console.log("Error during logout:", err);
+      return res.status(500).send('Error logging out.');
+    }
+    
+    // Destroy the session
+    req.session.destroy((err) => {
+      if (err) {
+        console.log("Error : Failed to destroy the session during logout.", err);
+        return res.status(500).send('Error destroying session.');
+      }
+      
+      // Clear the user from the request
+      req.user = null;
+      
+      // Redirect to home or login page
+      res.redirect("/");
+    });
   });
 };
 
