@@ -45,13 +45,14 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     .catch(err => console.error(err));
 
 
-app.post('/books', async (req, res) => {
+app.post('/books', ensureAuth, async (req, res) => {
     const { title, author, ia, available } = req.body;
     const user = req.user.id
     const newBook = new Book({ title, author, ia, available, user });
     console.log(newBook)
     try {
-        await newBook.save();
+        if(req.isAuthenticated())
+            await newBook.save();
         res.status(201).json(newBook);
     } catch (err) {
         res.status(400).json({ message: err.message });
@@ -96,6 +97,11 @@ router.get('/', (req, res) => {
         // User is not signed in
         res.redirect('/login'); // Redirect to login page
     }
+});
+
+router.get('/updateBooks', ensureAuth, (req, res) => {
+    console.log("ensure")
+    res.send('This is a protected route accessible only to authenticated users.');
 });
 
 router.get("/login", (req, res) => {
