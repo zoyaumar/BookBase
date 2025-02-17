@@ -1,9 +1,6 @@
 # BookBase
-Responsive website to manage your bookshelf library
+Responsive website to manage your own digital library
 ![Library Management Screenshot](images/library1.gif)
-
-
-Library Management Made Easy
 
 Overview
 
