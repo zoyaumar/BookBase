@@ -2,19 +2,19 @@
 Responsive website to manage your own digital library
 ![Library Management Screenshot](images/library1.gif)
 
-Overview
+**Overview**:
 
 Welcome to BookBase! This project is designed to help you keep track of the books you own and manage your personal library. With this application, you can organize and digitalize your book collection effortlessly. 
 
 Access this web application at https://bookbase-tvvp.onrender.com/
 
-Features:
+**Features**:
 - **Library Management**: Easily add, remove, and search for books within your library.
 - **Authenticantion**: Sign up or log in to access your library at any time. 
 - **Responsive Design**: Access your library on any device, thanks to a responsive design.
 - **OOP Concepts**: The project is built using Object-Oriented Programming (OOP) principles in JavaScript, ensuring a modular and maintainable codebase.
 
-Usage:
+**Usage**:
 - **Add Books**: Enter the title and author in the provided fields to add new books to your library. Example: "harry potter" & "rowling"
 - **Manage Your Collection**:
   - View all of your books on the View Library page.
@@ -22,7 +22,7 @@ Usage:
   - If you ever lend one of your books to a friend, simply change the availability status of your books (available/unavailable). 
 - **Automatic Saving**: Your library is automatically saved, ensuring your collection is ready whenever you return.
   
- Optimizations:
+ **Optimizations**:
  - Add the option to make your profile public to others, including a Profile and Explore page
  - Not only can you manage your own library, but you can also view your friends' libraries, making it easier to share and discover new books.
 
