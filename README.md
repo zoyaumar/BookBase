@@ -10,7 +10,7 @@ Access this web application at https://bookbase-tvvp.onrender.com/
 
 **Features**:
 - **Library Management**: Easily add, remove, and search for books within your library.
-- **Authenticantion**: Sign up or log in to access your library at any time. 
+- **Authentication**: Sign up or log in to access your library at any time. 
 - **Responsive Design**: Access your library on any device, thanks to a responsive design.
 - **OOP Concepts**: The project is built using Object-Oriented Programming (OOP) principles in JavaScript, ensuring a modular and maintainable codebase.
 
