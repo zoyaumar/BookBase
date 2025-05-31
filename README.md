@@ -4,7 +4,7 @@ Responsive website to manage your own digital library
 
 **Overview**:
 
-Welcome to BookBase! This project is designed to help you keep track of the books you own and manage your personal library. With this application, you can organize and digitalize your book collection effortlessly. 
+Welcome to BookBase! This project is designed to help you keep track of the books you own and manage your personal library. With this application, you can organize and digitize your book collection effortlessly. 
 
 <img src="https://github.com/zoyaumar/BookBase/blob/main/bookbase.gif" alt="BookBase GIF" width="300"/>
 Access this web application at https://bookbase-tvvp.onrender.com/
